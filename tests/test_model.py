@@ -47,3 +47,24 @@ def test_invalid_model_rejected():
     model["scale"][0] = 0
     with pytest.raises(ValueError):
         predict(model, [0] * 16)
+
+
+def test_extreme_finite_values_are_rejected():
+    _, _, _, model = fixture_model()
+    client = TestClient(create_app(model))
+    assert client.post("/predict", json={"features": [1e308] * 16}).status_code == 422
+
+
+def test_committed_artifact_matches_manifest():
+    import hashlib
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "model"
+    manifest = json.loads((root / "training-manifest.json").read_text())
+    assert (
+        hashlib.sha256((root / "model.json").read_bytes()).hexdigest()
+        == manifest["artifact_sha256"]
+    )
+    model = json.loads((root / "model.json").read_text())
+    assert predict(model, model["mean"])["label"] == "SIRA"

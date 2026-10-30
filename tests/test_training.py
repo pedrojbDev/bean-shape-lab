@@ -57,3 +57,14 @@ def test_uci_arff_uses_aspect_ration_spelling(tmp_path):
     x, y = load_data(archive)
     assert x.shape == (1, 16)
     assert y.tolist() == ["SEKER"]
+
+
+def test_dataset_checksum_rejects_unexpected_data(tmp_path):
+    import pytest
+
+    from bean_shape.training import verify_archive
+
+    archive = tmp_path / "data.zip"
+    archive.write_bytes(b"not the source dataset")
+    with pytest.raises(ValueError, match="checksum"):
+        verify_archive(archive)

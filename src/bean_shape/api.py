@@ -12,7 +12,8 @@ from .model import predict
 
 class PredictionRequest(BaseModel):
     features: Annotated[
-        list[Annotated[float, Field(allow_inf_nan=False)]], Field(min_length=16, max_length=16)
+        list[Annotated[float, Field(allow_inf_nan=False, ge=-1e9, le=1e9)]],
+        Field(min_length=16, max_length=16),
     ]
 
 

@@ -21,6 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from .model import export_model
 
 URL = "https://archive.ics.uci.edu/static/public/602/dry+bean+dataset.zip"
+ARCHIVE_SHA256 = "0a64eff5be87f48c3dbbfc0a12a56c5d5b5167ef8e61cd45d69b3e7c7130c06f"
 FEATURES = [
     "Area",
     "Perimeter",
@@ -73,6 +74,13 @@ def evaluate(classifier, scaler, x, y, y_train):
     }
 
 
+def verify_archive(archive):
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    if digest != ARCHIVE_SHA256:
+        raise ValueError("Dataset archive checksum does not match the pinned UCI snapshot")
+    return digest
+
+
 def load_data(archive):
     with zipfile.ZipFile(archive) as z:
         data = z.read("DryBeanDataset/Dry_Bean_Dataset.arff")
@@ -96,7 +104,7 @@ def main():
         if len(content) > 10_000_000:
             raise ValueError("Dataset archive exceeds expected maximum size")
         args.archive.write_bytes(content)
-    archive_hash = hashlib.sha256(args.archive.read_bytes()).hexdigest()
+    archive_hash = verify_archive(args.archive)
     x, y = load_data(args.archive)
     train, val, test = split_indices(y)
     scaler, classifier = train_classifier(x[train], y[train])
