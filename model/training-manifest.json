@@ -1,0 +1,12 @@
+{
+  "training_type": "from-scratch",
+  "training_commit": "1c602069f8ae186c85ce6482483aa7699f1a6830",
+  "dataset": "UCI Dry Bean (2020), DOI:10.24432/C50S4B",
+  "dataset_license": "CC-BY-4.0",
+  "dataset_url": "https://archive.ics.uci.edu/static/public/602/dry+bean+dataset.zip",
+  "dataset_archive_sha256": "0a64eff5be87f48c3dbbfc0a12a56c5d5b5167ef8e61cd45d69b3e7c7130c06f",
+  "split_method": "stratified random 60/20/20, seed 42; train-only scaler",
+  "artifact_sha256": "8a9aa02ba705af3659101bc03d62c21daf8f2d826f672d8fa6cda38fddeba959",
+  "python": "3.12.3",
+  "model": "multinomial logistic regression, C=1"
+}
