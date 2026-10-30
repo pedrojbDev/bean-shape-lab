@@ -26,7 +26,7 @@ FEATURES = [
     "Perimeter",
     "MajorAxisLength",
     "MinorAxisLength",
-    "AspectRatio",
+    "AspectRation",
     "Eccentricity",
     "ConvexArea",
     "EquivDiameter",

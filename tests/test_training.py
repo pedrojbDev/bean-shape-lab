@@ -24,3 +24,36 @@ def test_fitted_preprocessing_and_baseline_metrics():
     assert 0 <= scores["accuracy"] <= 1
     assert 0 <= scores["majority_accuracy"] <= 1
     assert sum(map(sum, scores["confusion_matrix"])) == len(test)
+
+
+def test_uci_arff_uses_aspect_ration_spelling(tmp_path):
+    import zipfile
+
+    from bean_shape.training import load_data
+
+    names = [
+        "Area",
+        "Perimeter",
+        "MajorAxisLength",
+        "MinorAxisLength",
+        "AspectRation",
+        "Eccentricity",
+        "ConvexArea",
+        "EquivDiameter",
+        "Extent",
+        "Solidity",
+        "roundness",
+        "Compactness",
+        "ShapeFactor1",
+        "ShapeFactor2",
+        "ShapeFactor3",
+        "ShapeFactor4",
+    ]
+    arff = "@RELATION beans\n" + "".join(f"@ATTRIBUTE {n} NUMERIC\n" for n in names)
+    arff += "@ATTRIBUTE Class {SEKER,SIRA}\n@DATA\n" + ",".join(["1"] * 16) + ",SEKER\n"
+    archive = tmp_path / "sample.zip"
+    with zipfile.ZipFile(archive, "w") as z:
+        z.writestr("DryBeanDataset/Dry_Bean_Dataset.arff", arff)
+    x, y = load_data(archive)
+    assert x.shape == (1, 16)
+    assert y.tolist() == ["SEKER"]
